@@ -47,12 +47,14 @@ export default function SignupForm() {
       'Content-Type': 'application/json'
     }
   })
-  const [role,setRole] = useState('')
+  const [role,setRole] = useState<string | undefined>('')
   const router = useRouter();
 
 useEffect(() => {
   if (data) {
     toast.success('Account created successfully!');
+    window.localStorage.setItem('email',formData.email);
+    window.localStorage.setItem('role',role!);
     router.push('/signin');
   }
   

@@ -34,7 +34,7 @@ export default function SigninForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const router = useRouter();
-  const [role,setRole] = useState('')
+  const [role,setRole] = useState<string | undefined>()
   const { data, error, isLoading, execute } = useFetch<SignInResponse>({
     method: 'POST',
     url: '/api/login',
@@ -46,8 +46,6 @@ export default function SigninForm() {
   useEffect(() => {
     if (data && typeof window !== 'undefined' ) {
       toast.success('Signed in successfully!');
-       window.localStorage.setItem('email',formData.email);
-      window.localStorage.setItem('role',role);
       router.push('/');
       router.refresh()
     }
@@ -57,6 +55,14 @@ export default function SigninForm() {
       setIsSubmitting(false);
     }
   }, [data, error, router]);
+  console.log(role)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedRole = window.localStorage.getItem('role');
+      setRole(storedRole!);
+    }
+  }, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -145,7 +151,6 @@ export default function SigninForm() {
             selectOptions={selectOptions}
             placeholder='Select A Role'
             value={role}
-            setValue={setRole}
             />
             </div>
 

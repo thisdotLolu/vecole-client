@@ -5,7 +5,7 @@ export async function GET(req: NextRequest) {
     const cookieStore = await cookies()
     const token =  cookieStore.get('access_token')?.value;
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/teachers`,{
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/students`,{
         headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
 
     if (!res.ok) {
       const errorData = await res.json();
+      console.log(errorData)
       const message = errorData?.detail || errorData?.message || 'An error occurred';
       
       return NextResponse.json({ error: message }, { status: res.status });
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     console.log(body)
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/teachers/`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/students/`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
