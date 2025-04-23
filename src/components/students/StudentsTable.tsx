@@ -10,15 +10,17 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Delete, Edit, Eye, Trash } from 'lucide-react';
+import EditStudent from './EditStudent';
+import DeleteStudent from './DeleteStudent';
 
 
-export interface TeacherRowData{
+export interface StudentRowData{
   email:string;
   role:string;
   id:string
 }
 
-function StudentsTable({tableData}:{tableData:TeacherRowData[]}) {
+function StudentsTable({tableData}:{tableData:StudentRowData[]}) {
  
   return (
     <>
@@ -40,12 +42,12 @@ function StudentsTable({tableData}:{tableData:TeacherRowData[]}) {
 
            <TableCell 
            className='flex items-center justify-center gap-3'>
-            {/* <EditTeacher
-             selectedTeacher={item}
+            <EditStudent
+            selectedStudent={item}
             />
-            <DeleteTeacher
-            selectedTeacher={item}
-            /> */}
+            <DeleteStudent
+            selectedStudent={item}
+            />
             <Eye 
             className='cursor-pointer'
             color='#191970'
