@@ -49,7 +49,7 @@ function EditClass({ selectedClass}: { selectedClass: ClassRowData | null}) {
     const router = useRouter();
 
     const { data, error, execute } = useFetch<ClassResponse>({
-        url: '/api/students/' + selectedClass?.id,
+        url: '/api/classes/' + selectedClass?.id,
         method: 'PUT'
     })
 
@@ -78,13 +78,11 @@ function EditClass({ selectedClass}: { selectedClass: ClassRowData | null}) {
         };
 
         if (!formData.name) {
-            newErrors.name = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.name)) {
-            newErrors.name = 'Email is invalid';
-        }  
+            newErrors.name = 'Name is required';
+        }
         
         if (!formData.grade) {
-      newErrors.grade = 'Password is required';}
+      newErrors.grade = 'Grade is required';}
 
         return newErrors;
     };
@@ -145,7 +143,7 @@ function EditClass({ selectedClass}: { selectedClass: ClassRowData | null}) {
 
                             <div>
                                 <label htmlFor="grade" className="block text-sm font-medium text-gray-700">
-                                    Password
+                                    Grade
                                 </label>
                                 <Input
                                     id="grade"

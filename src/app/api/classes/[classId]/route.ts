@@ -35,12 +35,12 @@ export async function GET(req: NextRequest,{ params } : { params: Promise<{ clas
   }
 
 
-export async function PUT(req: NextRequest,{ params } : { params: Promise<{ studentId: string }> }) {
+export async function PUT(req: NextRequest,{ params } : { params: Promise<{ classId: string }> }) {
   const cookieStore = await cookies();
   const token = cookieStore.get('access_token')?.value;
-  const {studentId} = await params;
+  const {classId} = await params;
 
-  console.log(studentId)
+  console.log(classId)
   console.log(token)
 
   try {
@@ -48,7 +48,7 @@ export async function PUT(req: NextRequest,{ params } : { params: Promise<{ stud
 
     console.log(body)
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/students/${studentId}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/classes/${classId}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -72,16 +72,16 @@ export async function PUT(req: NextRequest,{ params } : { params: Promise<{ stud
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ studentId: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ classId: string }> }) {
     const cookieStore = await cookies();
     const token = cookieStore.get('access_token')?.value;
-    const { studentId } = await params;
+    const { classId } = await params;
   
-    console.log(studentId);
+    console.log(classId);
     console.log(token);
   
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/students/${studentId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/classes/${classId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

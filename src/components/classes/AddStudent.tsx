@@ -66,7 +66,7 @@ console.log(studentsData)
     <Dialog>
     <DialogTrigger>  
               <p
-                  className='p-1 cursor-pointer px-2 rounded-md text-white bg-primary text-[.9rem]'
+                  className='p-1 cursor-pointer px-2 mt-10 rounded-md text-white bg-primary text-[.9rem]'
               >
                   + Add Student
               </p>

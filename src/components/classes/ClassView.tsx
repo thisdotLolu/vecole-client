@@ -41,7 +41,10 @@ function ClassView({classId}:{classId:string}) {
         <div className='w-full'>
             <p className='text-[3rem] font-bold'>{data?.data?.name}</p>
             <p className='text-[3rem] font-bold'>{data?.data?.grade}</p>
-            <ul>
+            <p>Student IDs</p>
+            <ul
+            className='list-disc'
+            >
             {(data?.data.students && data?.data?.students.length < 1) ? 'No Students' : data?.data?.students.map((student)=>(
                 <li>{student}</li> 
             ))}
