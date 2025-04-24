@@ -9,7 +9,6 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Edit } from 'lucide-react'
-import { TeacherRowData } from './TeachersTable'
 import { useFetch } from '@/app/hooks/useFetch'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
@@ -17,46 +16,47 @@ import CustomSelect from '../CustomSelect'
 import { selectOptions } from '../SignUp'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { ClassRowData } from './ClassesTable'
 
 
 type ErrorType = {
-    email: string;
-    password:string
+    name: string;
+    grade:string
 };
 
-interface Teacher {
-    email: string
-    role: string;
-    id: string
+interface Class {
+    name?:string;
+    grade?:string;
+    id?:string;
+    students?:{name:string,role:string,id:string},
+    teacher_id?:string
 }
 
-interface TeacherResponse {
-    data: Teacher[]
+interface ClassResponse {
+    data: Class[]
 }
 
-function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | null}) {
+function EditClass({ selectedClass}: { selectedClass: ClassRowData | null}) {
     const [formData, setFormData] = useState({
-        email: selectedTeacher?.email,
-        password:''
+        name: selectedClass?.name,
+        grade:selectedClass?.grade
     });
     const [errors, setErrors] = useState({
-        email: '',
-        password:''
+        name:'',
+        grade:''
     })
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const router = useRouter();
-    const [role, setRole] = useState<string | undefined>(selectedTeacher!.role)
 
-    const { data, error, execute } = useFetch<TeacherResponse>({
-        url: '/api/teachers/' + selectedTeacher?.id,
+    const { data, error, execute } = useFetch<ClassResponse>({
+        url: '/api/students/' + selectedClass?.id,
         method: 'PUT'
     })
 
     useEffect(() => {
-        if (data ) {
+        if (data && typeof window !== 'undefined' ) {
             console.log(data)
-            toast.success('Changes successfully made')
-            
+            toast.success('Changes successfully made')    
         }
         
         if (error) {
@@ -64,7 +64,7 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
           console.log(error)
           setIsSubmitting(false);
         }
-      }, [data, error]);
+      }, [data, error, router]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -73,18 +73,18 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
 
     const validate = (): ErrorType => {
         const newErrors= {
-            email: '',
-            password:''
+            name: '',
+            grade:''
         };
 
-        if (!formData.email) {
-            newErrors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Email is invalid';
+        if (!formData.name) {
+            newErrors.name = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.name)) {
+            newErrors.name = 'Email is invalid';
         }  
         
-        if (!formData.password) {
-      newErrors.password = 'Password is required';}
+        if (!formData.grade) {
+      newErrors.grade = 'Password is required';}
 
         return newErrors;
     };
@@ -100,13 +100,12 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
         }
 
         setIsSubmitting(true);
-        setErrors({ email: '' ,password:''});
+        setErrors({ name: '' ,grade:''});
 
         await execute({
             body: {
-                email: formData.email,
-                role,
-                password:formData.password
+               name:formData.name,
+               grade:formData.grade
             }
         });
         setIsSubmitting(false);
@@ -120,58 +119,47 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
                 size={18} /> </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Edit {selectedTeacher?.email}?</DialogTitle>
+                    <DialogTitle>Edit {selectedClass?.name}?</DialogTitle>
                     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                         <div className="space-y-4">
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                                     Email address
                                 </label>
                                 <Input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    autoComplete="email"
-                                    value={formData?.email}
+                                    id="name"
+                                    name="name"
+                                    type="name"
+                                    autoComplete="name"
+                                    value={formData?.name}
                                     onChange={handleChange}
-                                    className={`mt-1 block w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'
+                                    className={`mt-1 block w-full px-3 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'
                                         } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-primary`}
                                     placeholder="you@example.com"
                                 />
-                                {errors.email && (
-                                    <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                                {errors.name && (
+                                    <p className="mt-1 text-xs text-red-500">{errors.name}</p>
                                 )}
                             </div>
 
-                            <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                    Select Role
-                                </label>
-                                <CustomSelect
-                                    selectOptions={selectOptions}
-                                    placeholder='Select A Role'
-                                    value={role}
-                                    setValue={setRole}
-                                />
-                            </div>
 
                             <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="grade" className="block text-sm font-medium text-gray-700">
                                     Password
                                 </label>
                                 <Input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    autoComplete="current-password"
-                                    value={formData.password}
+                                    id="grade"
+                                    name="grade"
+                                    type="grade"
+                                    autoComplete="current-grade"
+                                    value={formData.grade}
                                     onChange={handleChange}
-                                    className={`mt-1 block w-full px-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'
+                                    className={`mt-1 block w-full px-3 py-2 border ${errors.grade ? 'border-red-500' : 'border-gray-300'
                                         } rounded-md shadow-sm focus:outline-none focus:ring-2 placeholder:text-[#08080842] focus:ring-secondary focus:border-primary`}
-                                    placeholder="••••••••"
+                                    placeholder="Grade"
                                 />
-                                {errors.password && (
-                                    <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+                                {errors.grade && (
+                                    <p className="mt-1 text-xs text-red-500">{errors.grade}</p>
                                 )}
                             </div>
 
@@ -204,4 +192,4 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
     )
 }
 
-export default EditTeacher
+export default EditClass

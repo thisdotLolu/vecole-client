@@ -9,7 +9,6 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Edit } from 'lucide-react'
-import { TeacherRowData } from './TeachersTable'
 import { useFetch } from '@/app/hooks/useFetch'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
@@ -20,43 +19,40 @@ import { toast } from 'sonner'
 
 
 type ErrorType = {
-    email: string;
-    password:string
+    name: string;
+    grade:string
 };
 
-interface Teacher {
-    email: string
-    role: string;
-    id: string
+interface Class {
+name:string;
+grade:string
 }
 
-interface TeacherResponse {
-    data: Teacher[]
+interface ClassResponse {
+    data: Class[]
 }
 
-function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | null}) {
+function CreateClass() {
     const [formData, setFormData] = useState({
-        email: selectedTeacher?.email,
-        password:''
+        name:'',
+        grade:''
     });
     const [errors, setErrors] = useState({
-        email: '',
-        password:''
+        name: '',
+        grade:''
     })
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const router = useRouter();
-    const [role, setRole] = useState<string | undefined>(selectedTeacher!.role)
 
-    const { data, error, execute } = useFetch<TeacherResponse>({
-        url: '/api/teachers/' + selectedTeacher?.id,
-        method: 'PUT'
+    const { data, error, execute } = useFetch<ClassResponse>({
+        url: '/api/classes',
+        method: 'POST'
     })
 
     useEffect(() => {
-        if (data ) {
+        if (data && typeof window !== 'undefined' ) {
             console.log(data)
-            toast.success('Changes successfully made')
-            
+            toast.success('Class Created')   
         }
         
         if (error) {
@@ -64,7 +60,7 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
           console.log(error)
           setIsSubmitting(false);
         }
-      }, [data, error]);
+      }, [data, error, router]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -73,18 +69,16 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
 
     const validate = (): ErrorType => {
         const newErrors= {
-            email: '',
-            password:''
+            name: '',
+            grade:''
         };
 
-        if (!formData.email) {
-            newErrors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Email is invalid';
-        }  
+        if (!formData.name) {
+            newErrors.name = 'Email is required';
+        }
         
-        if (!formData.password) {
-      newErrors.password = 'Password is required';}
+        if (!formData.grade) {
+        newErrors.grade = 'Password is required';}
 
         return newErrors;
     };
@@ -100,13 +94,13 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
         }
 
         setIsSubmitting(true);
-        setErrors({ email: '' ,password:''});
+        setErrors({ name: '' ,grade:''});
 
         await execute({
             body: {
-                email: formData.email,
-                role,
-                password:formData.password
+                name:formData.name,
+                grade:formData.grade,
+                
             }
         });
         setIsSubmitting(false);
@@ -114,64 +108,54 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
 
     return (
         <Dialog>
-            <DialogTrigger> <Edit
-                className='cursor-pointer'
-                color='#191970'
-                size={18} /> </DialogTrigger>
+            <DialogTrigger>  <p
+                    className='p-1 cursor-pointer px-2 rounded-md text-white bg-primary text-[.9rem]'
+                    >
+                        + Create Class
+                    </p> </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Edit {selectedTeacher?.email}?</DialogTitle>
+                    <DialogTitle>Create Class</DialogTitle>
                     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                         <div className="space-y-4">
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                    Email address
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                   Name
                                 </label>
                                 <Input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    autoComplete="email"
-                                    value={formData?.email}
+                                    id="name"
+                                    name="name"
+                                    type="name"
+                                    autoComplete="name"
+                                    value={formData?.name}
                                     onChange={handleChange}
-                                    className={`mt-1 block w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'
+                                    className={`mt-1 block w-full px-3 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'
                                         } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-primary`}
-                                    placeholder="you@example.com"
+                                    placeholder="Class Name"
                                 />
-                                {errors.email && (
-                                    <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                                {errors.name && (
+                                    <p className="mt-1 text-xs text-red-500">{errors.name}</p>
                                 )}
                             </div>
 
+                       
                             <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                    Select Role
-                                </label>
-                                <CustomSelect
-                                    selectOptions={selectOptions}
-                                    placeholder='Select A Role'
-                                    value={role}
-                                    setValue={setRole}
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                    Password
+                                <label htmlFor="grade" className="block text-sm font-medium text-gray-700">
+                                    Grade
                                 </label>
                                 <Input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    autoComplete="current-password"
-                                    value={formData.password}
+                                    id="grade"
+                                    name="grade"
+                                    type="text"
+                                    autoComplete="current-grade"
+                                    value={formData.grade}
                                     onChange={handleChange}
-                                    className={`mt-1 block w-full px-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'
+                                    className={`mt-1 block w-full px-3 py-2 border ${errors.grade ? 'border-red-500' : 'border-gray-300'
                                         } rounded-md shadow-sm focus:outline-none focus:ring-2 placeholder:text-[#08080842] focus:ring-secondary focus:border-primary`}
-                                    placeholder="••••••••"
+                                    placeholder="Grade"
                                 />
-                                {errors.password && (
-                                    <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+                                {errors.grade && (
+                                    <p className="mt-1 text-xs text-red-500">{errors.grade}</p>
                                 )}
                             </div>
 
@@ -189,10 +173,10 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Saving Changes...
+                                    Adding Class...
                                     </span>
                                 ) : (
-                                    'Save Changes'
+                                    'Create Class'
                                 )}
                             </Button>
                         </div>
@@ -204,4 +188,4 @@ function EditTeacher({ selectedTeacher}: { selectedTeacher: TeacherRowData | nul
     )
 }
 
-export default EditTeacher
+export default CreateClass;

@@ -23,6 +23,11 @@ const items = [
     url: "/students",
     icon: PersonStandingIcon,
   },
+  {
+    title: "Classes",
+    url: "/classes",
+    icon: PersonStandingIcon,
+  },
 ]
 
 export function AppSidebar() {
