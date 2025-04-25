@@ -44,7 +44,7 @@ export default function SigninForm() {
   });
 
   useEffect(() => {
-    if (data && typeof window !== 'undefined' ) {
+    if (data) {
       toast.success('Signed in successfully!');
       router.push('/');
       router.refresh()
@@ -54,7 +54,7 @@ export default function SigninForm() {
       toast.error(error);
       setIsSubmitting(false);
     }
-  }, [data, error, router]);
+  }, [data, error]);
   console.log(role)
 
   useEffect(() => {

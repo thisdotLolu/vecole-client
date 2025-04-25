@@ -42,7 +42,6 @@ export const useFetch = <T = any>({
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter()
 
   const execute = async (overrideOptions: Partial<UseFetchOptions> = {}) => {
     setIsLoading(true);
